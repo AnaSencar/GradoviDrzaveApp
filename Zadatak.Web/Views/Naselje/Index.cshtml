@@ -1,0 +1,196 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+    <div id="naselja">
+
+        <div class="row mb-2">
+            <div class="col-9">
+                {{naseljaCount}} ukupno
+            </div>
+            <div class="col-3">
+                <button class="btn btn-primary" @@click="openCreateModal()" style="float:right">Dodaj</button>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="width:40%">Naziv</th>
+                    <th style="width:20%">Postanski broj</th>
+                    <th style="width:30%">Drzava</th>
+                    <th style="width:10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="naselje in naselja">
+                    <td>{{naselje.naziv}}</td>
+                    <td>{{naselje.postanskiBroj}}</td>
+                    <td>{{naselje.drzava.naziv}}</td>
+                    <td>
+                        <button class="btn btn-primary" @@click="openEditModal(naselje)">Azuriraj</button>
+                        <button class="btn btn-danger" @@click="deleteNaselje(naselje)">Obrisi</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <template v-if="showTable">
+            <paginate :page-count="this.filters.pages"
+                      :click-handler="changePageNumber"
+                      :prev-text="'Prev'"
+                      :next-text="'Next'"
+                      :container-class="'pagination'"
+                      :page-class="'page-item'"
+                      :page-link-class="'page-link'"
+                      :prev-class="'page-item'"
+                      :next-class="'page-item'"
+                      :prev-link-class="'page-link'"
+                      :next-link-class="'page-link'"
+                      :active-class="'active'"></paginate>
+        </template>
+
+        <div class="modal fade" id="createModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Dodaj novo naselje
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                Naziv
+                            </div>
+                            <div class="col-8">
+                                <input type="text" :class="{ 'is-invalid' : $v.naseljeForCreate.naziv.$error, 'form-control' : true }" v-model="$v.naseljeForCreate.naziv.$model" />
+                                <div v-if="!$v.naseljeForCreate.naziv.required && $v.naseljeForCreate.naziv.$error" class="invalid-feedback">
+                                    Required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                Postanski broj
+                            </div>
+                            <div class="col-8">                                
+                                <input type="text" :class="{ 'is-invalid' : $v.naseljeForCreate.postanskiBroj.$error, 'form-control' : true }" v-model="$v.naseljeForCreate.postanskiBroj.$model" />
+                                <div v-if="!$v.naseljeForCreate.postanskiBroj.required && $v.naseljeForCreate.postanskiBroj.$error" class="invalid-feedback">
+                                    Required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                Naziv
+                            </div>
+                            <div class="col-8">
+                                @*<select class="form-control" :class="{ 'is-invalid' : $v.naseljeForCreate.drzavaId.$error, 'form-control' : true }" v-model="$v.naseljeForCreate.drzavaId.$model">
+            <option v-for="drzava in drzave" :value="drzava.id">{{drzava.naziv}}</option>
+        </select>
+        <div v-if="!$v.naseljeForCreate.drzavaId.positiveNumber && $v.naseljeForCreate.drzavaId.$error" class="invalid-feedback">
+            TEst
+        </div>*@
+                                <multiselect v-model="naseljeForCreate.drzava"
+                                             :options="drzave"
+                                             track-by="id"
+                                             label="sifra"
+                                             :multiple="false"
+                                             :searchable="true"
+                                             placeholder=""
+                                             :loading="isLoading"
+                                             @@select="drzavaSelected"
+                                             @@search-change="drzavaSearchChange"
+                                             @@close="closeMultiselect"
+                                             :allow-empty="false">
+                                    <template slot="singleLabel" slot-scope="{ option }">
+                                        {{ option.naziv }}
+                                    </template>
+                                    <template slot="option" slot-scope="{ option }">
+                                        {{ option.naziv }} ({{ option.sifra }})
+                                    </template>
+                                </multiselect>
+                                <div v-if="!$v.naseljeForCreate.drzavaId.positiveNumber && $v.naseljeForCreate.drzavaId.$error" class="invalid-feedback d-block">
+                                    Required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" @@click="createNaselje()">Spremi</button>
+                        <button class="btn btn-danger" @@click="closeCreateModal()">Odbaci</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        Azuriraj naselje
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                Naziv
+                            </div>
+                            <div class="col-8">
+                                <input type="text" :class="{ 'is-invalid' : $v.naseljeForEdit.naziv.$error, 'form-control' : true }" v-model="$v.naseljeForEdit.naziv.$model" />
+                                <div v-if="!$v.naseljeForEdit.naziv.required && $v.naseljeForEdit.naziv.$error" class="invalid-feedback">
+                                    Required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-4">
+                                Postanski broj
+                            </div>
+                            <div class="col-8">
+                                <input type="text" :class="{ 'is-invalid' : $v.naseljeForEdit.postanskiBroj.$error, 'form-control' : true }" v-model="$v.naseljeForEdit.postanskiBroj.$model" />
+                                <div v-if="!$v.naseljeForEdit.postanskiBroj.required && $v.naseljeForEdit.postanskiBroj.$error" class="invalid-feedback">
+                                    Required
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                Naziv
+                            </div>
+                            <div class="col-8">
+                                <multiselect v-model="naseljeForEdit.drzava"
+                                             :options="drzave"
+                                             track-by="id"
+                                             label="sifra"
+                                             :multiple="false"
+                                             :searchable="true"
+                                             placeholder=""
+                                             :loading="isLoading"
+                                             @@select="drzavaEditSelected"
+                                             @@search-change="drzavaSearchChange"
+                                             @@close="closeMultiselect"
+                                             :allow-empty="false">
+                                    <template slot="singleLabel" slot-scope="{ option }">
+                                        {{ option.naziv }}
+                                    </template>
+                                </multiselect>
+                                @*<select class="form-control" :class="{ 'is-invalid' : $v.naseljeForEdit.drzavaId.$error, 'form-control' : true }" v-model="$v.naseljeForEdit.drzavaId.$model">
+                                    <option v-for="drzava in drzave" :value="drzava.id">{{drzava.naziv}}</option>
+                                </select>*@
+                                <div v-if="!$v.naseljeForEdit.drzavaId.positiveNumber && $v.naseljeForEdit.drzavaId.$error" class="invalid-feedback">
+                                    Required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" @@click="updateNaselje()">Spremi</button>
+                        <button class="btn btn-danger" @@click="closeEditModal()">Odbaci</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<script src="~/js/Naselje/Index.js?t=20201011"></script>
