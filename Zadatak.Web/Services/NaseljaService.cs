@@ -41,7 +41,7 @@ namespace Zadatak.Web.Services
             {
                 return new StatusCodeViewModel
                 {
-                    StatusCode = 406,
+                    StatusCode = 400,
                     StatusMessage = "Neispravan unos"
                 };
             }
@@ -51,7 +51,7 @@ namespace Zadatak.Web.Services
                 _context.SaveChanges();
                 return new StatusCodeViewModel
                 {
-                    StatusCode = 200,
+                    StatusCode = 201,
                     StatusMessage = "Naselje kreirano"
                 };
             }
@@ -63,7 +63,7 @@ namespace Zadatak.Web.Services
             {
                 return new StatusCodeViewModel
                 {
-                    StatusCode = 406,
+                    StatusCode = 400,
                     StatusMessage = "Neispravan unos"
                 };
             }

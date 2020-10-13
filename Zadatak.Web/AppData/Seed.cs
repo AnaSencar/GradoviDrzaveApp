@@ -12,8 +12,15 @@ namespace Zadatak.Web.AppData
     {
         public static async Task SeedData(IServiceProvider serviceProvider)
         {
+            //CreateInitialCountries(serviceProvider);
+
+            await CreateUser(serviceProvider);
+
+        }
+
+        private static void CreateInitialCountries(IServiceProvider serviceProvider)
+        {
             var context = serviceProvider.GetRequiredService<ZadatakContext>();
-            //var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
             context.Database.EnsureCreated();
             if (!context.Drzave.Any())
             {
@@ -32,9 +39,6 @@ namespace Zadatak.Web.AppData
                 }
                 context.SaveChanges();
             }
-
-            await CreateUser(serviceProvider);
-            
         }
 
         private static async Task CreateUser(IServiceProvider serviceProvider)

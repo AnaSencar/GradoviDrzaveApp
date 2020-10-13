@@ -85,12 +85,6 @@
                                 Naziv
                             </div>
                             <div class="col-8">
-                                @*<select class="form-control" :class="{ 'is-invalid' : $v.naseljeForCreate.drzavaId.$error, 'form-control' : true }" v-model="$v.naseljeForCreate.drzavaId.$model">
-            <option v-for="drzava in drzave" :value="drzava.id">{{drzava.naziv}}</option>
-        </select>
-        <div v-if="!$v.naseljeForCreate.drzavaId.positiveNumber && $v.naseljeForCreate.drzavaId.$error" class="invalid-feedback">
-            TEst
-        </div>*@
                                 <multiselect v-model="naseljeForCreate.drzava"
                                              :options="drzave"
                                              track-by="id"

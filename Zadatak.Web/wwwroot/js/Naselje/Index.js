@@ -83,6 +83,7 @@ var Naselja = new Vue({
         },
         closeCreateModal() {
             $('#createModal').modal('hide');
+            this.$v.naseljeForCreate.$reset();
             this.naseljeForCreate = {};
         },
         createNaselje() {
@@ -97,6 +98,7 @@ var Naselja = new Vue({
                         toastr.success(response.data.status);
                         this.getNaselja();
                         this.closeCreateModal();
+                        this.$v.naseljeForCreate.$reset();
                     }
                 })
                 .catch(function (error) {
@@ -111,6 +113,7 @@ var Naselja = new Vue({
         },
         closeEditModal() {
             $('#editModal').modal('hide');
+            this.$v.naseljeForEdit.$reset();
             this.naseljeForEdit = {};
         },
         updateNaselje() {
@@ -121,6 +124,7 @@ var Naselja = new Vue({
                         toastr.success(response.data.status);
                         this.getNaselja();
                         this.closeEditModal();
+                        this.$v.naseljeForEdit.$reset();
                     }
                 })
                 .catch(function (error) {
@@ -160,7 +164,7 @@ var Naselja = new Vue({
         },
         closeMultiselect() {
             this.filters.search = "";
-        }
+        },
     },
     created() {
         this.getDrzave();
