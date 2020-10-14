@@ -94,7 +94,7 @@ var Naselja = new Vue({
             axios
                 .post('/api/NaseljeApi', this.naseljeForCreate)
                 .then(response => {
-                    if (response.data.code == 200) {
+                    if (response.data.code == 201) {
                         toastr.success(response.data.status);
                         this.getNaselja();
                         this.closeCreateModal();
